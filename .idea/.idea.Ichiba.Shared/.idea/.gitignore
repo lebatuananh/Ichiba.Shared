@@ -1,0 +1,13 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/modules.xml
+/contentModel.xml
+/projectSettingsUpdater.xml
+/.idea.Ichiba.Shared.iml
+# Datasource local storage ignored files
+/../../../../../../../:\Project\Ez-buy\Ichiba.Shared\.idea\.idea.Ichiba.Shared\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/
