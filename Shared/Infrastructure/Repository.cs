@@ -69,9 +69,9 @@ namespace Shared.Infrastructure
             return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool assNoTracking = false)
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = false)
         {
-            if (assNoTracking)
+            if (asNoTracking)
             {
                 return await _dbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate);
             }
@@ -79,10 +79,10 @@ namespace Shared.Infrastructure
         }
 
         public async Task<TType> GetSingleAsync<TType>(Expression<Func<T, bool>> predicate,
-            Expression<Func<T, TType>> select = null, bool assNoTracking = false) where TType : class
+            Expression<Func<T, TType>> select = null, bool asNoTracking = false) where TType : class
         {
             var queryable = _dbContext.Set<T>().Where(predicate);
-            if (assNoTracking) queryable = queryable.AsNoTracking(); ;
+            if (asNoTracking) queryable = queryable.AsNoTracking(); ;
             if (select != null) return await queryable.Select(select).FirstOrDefaultAsync();
 
             var entity = await queryable.FirstOrDefaultAsync();
