@@ -4,18 +4,11 @@ namespace Shared.BaseModel
 {
     public class BaseEntityResponse<TEntity> : BaseResponse
     {
+        public BaseEntityResponse(bool status, IList<DetailError> detailErrors) : base(status, detailErrors)
+        {
+        }
+
         public BaseEntityResponse()
-        {
-        }
-
-        public BaseEntityResponse(bool status, string errorCode, IDictionary<string, string> parameters = null) : base(
-            status,
-            errorCode, parameters)
-        {
-        }
-
-        public BaseEntityResponse(string errorCode, IDictionary<string, string> parameters = null) : base(errorCode,
-            parameters)
         {
         }
 

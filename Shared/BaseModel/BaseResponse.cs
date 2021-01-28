@@ -2,40 +2,44 @@
 
 namespace Shared.BaseModel
 {
+    public class DetailError
+
+    {
+        public DetailError(string errorCode, IDictionary<string, string> parameters)
+        {
+            ErrorCode = errorCode;
+            Parameters = parameters;
+        }
+
+        public string ErrorCode { get; }
+        public IDictionary<string, string> Parameters { get; }
+    }
+
     public class BaseResponse
     {
+        public BaseResponse(bool status, IList<DetailError> detailErrors)
+        {
+            Status = status;
+            DetailErrors = detailErrors;
+        }
+
         public BaseResponse()
         {
         }
 
-        public BaseResponse(bool status, string errorCode, IDictionary<string, string> parameters = null)
-        {
-            Status = status;
-            ErrorCode = errorCode;
-            Parameters = parameters;
-        }
-
-        public BaseResponse(string errorCode, IDictionary<string, string> parameters = null)
-        {
-            ErrorCode = errorCode;
-            Parameters = parameters;
-        }
-
         public bool Status { get; set; }
 
-        public string ErrorCode { get; set; }
-        public IDictionary<string, string> Parameters { get; set; }
+        public IList<DetailError> DetailErrors { get; set; }
 
         public void Successful()
         {
             Status = true;
         }
 
-        public void Fail(string errorCode, IDictionary<string, string> parameters = null)
+        public void Fail(IList<DetailError> detailErrors)
         {
             Status = false;
-            ErrorCode = errorCode;
-            Parameters = parameters;
+            DetailErrors = detailErrors;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentValidation.Results;
 using Shared.BaseModel;
 using Shared.Extensions;
@@ -13,11 +14,15 @@ namespace Shared.Exceptions
             BaseResponses = baseResponses;
         }
 
-        public ValidationException(ValidationFailure failures, BaseResponse baseResponses)
+        public ValidationException(IEnumerable<ValidationFailure> failures, BaseResponse baseResponses)
             : this(baseResponses)
         {
-            BaseResponses = new BaseResponse(false, failures.ErrorCode,
-                failures.CustomState.ToDictionary<string, string>());
+            var detailErrors = new List<DetailError>();
+            foreach (var validationFailure in failures)
+                detailErrors.Add(new DetailError(validationFailure.ErrorCode,
+                    validationFailure.CustomState.ToDictionary<string, string>()));
+
+            BaseResponses = new BaseResponse(false, detailErrors);
         }
 
         public BaseResponse BaseResponses { get; }

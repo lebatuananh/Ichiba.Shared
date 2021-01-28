@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Shared.BaseApi
 {
-    public class BaseApiClient
+    public class BaseApiClient : IBaseApiClient
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;

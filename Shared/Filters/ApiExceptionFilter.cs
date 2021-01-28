@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Shared.BaseModel;
 using Shared.Exceptions;
 
 namespace Shared.Filters
@@ -18,9 +17,7 @@ namespace Shared.Filters
             _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
                 {typeof(ValidationException), HandleValidationException},
-                {typeof(NotFoundException), HandleNotFoundException},
-                {typeof(ErrorCodeException), HandleErrorCodeException},
-                {typeof(ErrorCodeParameterException), HandleErrorCodeParameterException}
+                {typeof(NotFoundException), HandleNotFoundException}
             };
         }
 
@@ -81,31 +78,6 @@ namespace Shared.Filters
 
                 context.Result = new NotFoundObjectResult(details);
             }
-
-            context.ExceptionHandled = true;
-        }
-
-        private void HandleErrorCodeException(ExceptionContext context)
-        {
-            if (context.Exception is ErrorCodeException exception)
-                context.Result = new BadRequestObjectResult(new BaseResponse
-                {
-                    ErrorCode = exception.ErrorCode,
-                    Status = false
-                });
-
-            context.ExceptionHandled = true;
-        }
-
-        private void HandleErrorCodeParameterException(ExceptionContext context)
-        {
-            if (context.Exception is ErrorCodeParameterException exception)
-                context.Result = new BadRequestObjectResult(new BaseResponse
-                {
-                    ErrorCode = exception.ErrorCode,
-                    Status = false,
-                    Parameters = exception.Parameters
-                });
 
             context.ExceptionHandled = true;
         }
