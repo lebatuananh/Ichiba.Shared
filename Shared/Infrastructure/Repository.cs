@@ -32,41 +32,60 @@ namespace Shared.Infrastructure
             return await queryable.ToQueryResultAsync(skip, take, sort);
         }
 
-        public async Task<IList<T>> GetManyAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IList<T>> GetManyAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = false)
         {
+            if (asNoTracking)
+            {
+                return await _dbContext.Set<T>().AsNoTracking().Where(predicate).ToListAsync();
+            }
             return await _dbContext.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<IList<T>> GetManyAsync(Expression<Func<T, bool>> predicate, int take)
+        public async Task<IList<T>> GetManyAsync(Expression<Func<T, bool>> predicate, int take, bool asNoTracking = false)
         {
+            if (asNoTracking)
+            {
+                return await _dbContext.Set<T>().AsNoTracking().Where(predicate).Take(take).ToListAsync();
+            }
             return await _dbContext.Set<T>().Where(predicate).Take(take).ToListAsync();
         }
 
         public async Task<IList<T>> GetManyAsync(Expression<Func<T, bool>> predicate, int take,
-            Expression<Func<T, object>> order = null)
+            Expression<Func<T, object>> order = null, bool asNoTracking = false)
         {
             var queryable = _dbContext.Set<T>().Where(predicate);
+            if (asNoTracking) queryable = queryable.AsNoTracking();
             if (order != null) queryable = queryable.OrderByDescending(order);
 
             return await queryable.Take(take).ToListAsync();
         }
 
-        public async Task<IList<T>> GetAllAsync()
+        public async Task<IList<T>> GetAllAsync(bool asNoTracking = false)
         {
+            if (asNoTracking)
+            {
+                return await _dbContext.Set<T>().AsNoTracking().ToListAsync();
+            }
             return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate)
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool assNoTracking = false)
         {
+            if (assNoTracking)
+            {
+                return await _dbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate);
+            }
             return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate);
         }
 
         public async Task<TType> GetSingleAsync<TType>(Expression<Func<T, bool>> predicate,
-            Expression<Func<T, TType>> select = null) where TType : class
+            Expression<Func<T, TType>> select = null, bool assNoTracking = false) where TType : class
         {
-            if (select != null) return await _dbContext.Set<T>().Where(predicate).Select(select).FirstOrDefaultAsync();
+            var queryable = _dbContext.Set<T>().Where(predicate);
+            if (assNoTracking) queryable = queryable.AsNoTracking(); ;
+            if (select != null) return await queryable.Select(select).FirstOrDefaultAsync();
 
-            var entity = await _dbContext.Set<T>().Where(predicate).FirstOrDefaultAsync();
+            var entity = await queryable.FirstOrDefaultAsync();
             return entity.To<TType>();
         }
 
@@ -141,26 +160,30 @@ namespace Shared.Infrastructure
         }
 
         public async Task<IList<TType>> GetAsync<TType>(Expression<Func<T, bool>> predicate,
-            Expression<Func<T, TType>> select) where TType : class
+            Expression<Func<T, TType>> select, bool asNoTracking = false) where TType : class
         {
+            if (asNoTracking) return await _dbContext.Set<T>().AsNoTracking().Where(predicate).Select(select).ToListAsync();
             return await _dbContext.Set<T>().Where(predicate).Select(select).ToListAsync();
         }
 
-        public async Task<IList<TType>> GetAsync<TType>(Expression<Func<T, TType>> select) where TType : class
+        public async Task<IList<TType>> GetAsync<TType>(Expression<Func<T, TType>> select, bool asNoTracking = false) where TType : class
         {
+            if (asNoTracking) return await _dbContext.Set<T>().AsNoTracking().Select(select).ToListAsync();
             return await _dbContext.Set<T>().Select(select).ToListAsync();
         }
 
-        public async Task<IList<T>> GetManyAsync(Expression<Func<T, bool>> predicate, int skip, int take)
+        public async Task<IList<T>> GetManyAsync(Expression<Func<T, bool>> predicate, int skip, int take, bool asNoTracking = false)
         {
+            if (asNoTracking) return await _dbContext.Set<T>().AsNoTracking().Where(predicate).Skip(skip).Take(take).ToListAsync();
             return await _dbContext.Set<T>().Where(predicate)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
         }
 
-        public async Task<T> GetSingleAsync()
+        public async Task<T> GetSingleAsync(bool asNoTracking = false)
         {
+            if (asNoTracking) return await _dbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync();
             return await _dbContext.Set<T>().FirstOrDefaultAsync();
         }
     }
